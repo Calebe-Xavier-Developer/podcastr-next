@@ -1,29 +1,62 @@
-/*SPA
-useEffect(() => {//primeiro parametro é o que quer executar
-    fetch('http://localhost:3434/episodes')
-      .then(response => response.json())
-      .then(data => console.log(data))
-  }, []) //o segundo é quando
-*/
-/* SSR
-export async function getServerSideProps() {
-  const response = await fetch('http://localhost:3434/episodes');
-  const data = await response.json();
+import { GetStaticProps } from 'next';
+import { format, parseISO } from 'date-fns';
+import ptBR from 'date-fns/locale/pt-BR';
+import { api } from '../services/api';
+import { convertDurationToTimeString } from '../utils/convertDurationToTImeString';
+
+type Episode = {
+  id: string;
+  title: string;
+  thumbnail: string;
+  members: string;
+  duration: number;
+  durationAsString: string;
+  published_at: string;
+  url: string;
+  description: string;
+}
+
+type HomeProps = {
+  episodes: Episode[];
+};
+
+export const getStaticProps: GetStaticProps = async () => {
+  const { data } = await api.get('episodes', {
+    params: {
+      _limit: 12,
+      _sort: 'publish_at',
+      _order: 'desc'
+    }
+  });
+
+  const episodes = data.map(episode => {
+    return {
+      id: episode.id,
+      title: episode.title,
+      thumbnail: episode.thumbnail,
+      members: episode.members,
+      publishedAt: format(
+        parseISO(episode.published_at),
+        'd MMM yy',
+        { locale: ptBR }
+      ),
+      duration: Number(episode.file.duration),
+      durationAsString: convertDurationToTimeString(Number(episode.file.duration)),
+      description: episode.description,
+      url: episode.file.url,
+    };
+  });
 
   return {
     props: {
-      episodes: data,
-    }
+      episodes,
+    },
+    revalidate: 60 * 60 * 8,
   }
 }
-*/
-//SSG Gera uma versão estatica que é servida para varias pessoas, sem requisição nova
 
-//import { useEffect } from "react"; Dispara algo sempre que algo mudar(efeitos colarerais);
-
-export default function Home(props) {
+export default function Home(props: HomeProps) {
   console.log(props.episodes);
-
   return (
     <>
       <h1>Hello World! sera ?</h1>
@@ -34,14 +67,3 @@ export default function Home(props) {
   )
 }
 
-export async function getStaticProps() {
-  const response = await fetch('http://localhost:3434/episodes');
-  const data = await response.json();
-
-  return {
-    props: {
-      episodes: data,
-    },
-    revalidate: 60 * 60 * 8,
-  }
-}

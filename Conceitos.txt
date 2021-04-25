@@ -1,0 +1,20 @@
+/*SPA //import { useEffect } from "react"; Dispara algo sempre que algo mudar(efeitos colarerais);
+useEffect(() => {//primeiro parametro é o que quer executar
+    fetch('http://localhost:3434/episodes')
+      .then(response => response.json())
+      .then(data => console.log(data))
+  }, []) //o segundo é quando
+*/
+/* SSR
+export async function getServerSideProps() {
+  const response = await fetch('http://localhost:3434/episodes');
+  const data = await response.json();
+
+  return {
+    props: {
+      episodes: data,
+    }
+  }
+}
+*/
+//SSG Gera uma versão estatica que é servida para varias pessoas, sem requisição nova
