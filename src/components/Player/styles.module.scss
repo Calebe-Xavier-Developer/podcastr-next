@@ -1,4 +1,4 @@
-.playerContainer{
+.playerContainer {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -11,7 +11,7 @@
   background-color: var(--purple-500);
   color: var(--white);
 
-  header{
+  header {
     display: flex;
     align-items: center;
     gap: 1rem;
@@ -22,7 +22,7 @@
     font-weight: 600;
   }
 
-  footer{
+  footer {
     align-self: stretch;
     &.empty {
       opacity: 0.5;
